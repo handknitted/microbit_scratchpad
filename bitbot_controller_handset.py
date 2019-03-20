@@ -2,6 +2,13 @@
 from microbit import *
 import radio
 
+MOTOR_ON = 1
+MOTOR_OFF = 0
+
+MOTOR_ONE = 'one'
+MOTOR_TWO = 'two'
+
+
 _states = {
     'F': 'Forward',
     'B': 'Backward',
@@ -12,16 +19,12 @@ radio.on()
 radio.config(channel=47, power=5)
 
 while True:
-    previous_state = _state
-    x_reading = accelerometer.get_x()
-    y_reading = accelerometer.get_y()
-
-    if y_reading > 200:
-        state = _states['F']
-    elif y_reading < -200:
-         state = _states['B']
-    else:
-        state = _states['S']
-    display.show(state)
+    state = '{:s},{},{:s},{}'.format(MOTOR_ONE, int(button_a.is_pressed()), MOTOR_TWO, int(button_b.is_pressed()))
+    state_split = state.split(',')
+    display.clear()
+    if int(state_split[1]):
+        display.set_pixel(0, 0, 9)
+    if int(state_split[3]):
+        display.set_pixel(4, 0, 9)
     radio.send(state)
-    sleep(10)
+    sleep(1)
