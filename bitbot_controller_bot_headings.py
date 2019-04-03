@@ -75,10 +75,10 @@ def trim(heading):
 
 
 def set_motor(motor_pos, motor_neg, speed=0):
-    if speed > 0:
+    if speed < 0:
         motor_pos(speed)
         motor_neg(0)
-    elif speed < 0:
+    elif speed > 0:
         motor_pos(0)
         motor_neg(speed)
 
@@ -98,8 +98,12 @@ while True:
             if fade_right ^ fade_left:
                 if fade_right:
                     current_heading += 5
+                    if current_heading > 360:
+                        current_heading -= 360
                 else:
                     current_heading -= 5
+                    if current_heading < 0:
+                        current_heading += 360
 
             trim_values = trim(current_heading)
             print("Current heading: {}, Trim: {}".format(current_heading, trim_values))
@@ -112,6 +116,9 @@ while True:
             elif FORWARD_TRANS == direction_modifier:
                 set_motor(MOTOR_ONE_POS_WRITE, MOTOR_ONE_NEG_WRITE, int(5 * trim_values[0]) + 300)
                 set_motor(MOTOR_TWO_POS_WRITE, MOTOR_TWO_NEG_WRITE, int(5 * trim_values[1]) + 300)
+            elif BACKWARD_TRANS == direction_modifier:
+                set_motor(MOTOR_ONE_NEG_WRITE, MOTOR_ONE_POS_WRITE, int(5 * trim_values[1]) + 300)
+                set_motor(MOTOR_TWO_NEG_WRITE, MOTOR_TWO_POS_WRITE, int(5 * trim_values[0]) + 300)
             else:
                 MOTOR_ONE_POS_WRITE(MOTOR_OFF)
                 MOTOR_ONE_NEG_WRITE(MOTOR_OFF)
